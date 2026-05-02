@@ -1,21 +1,20 @@
-import clsx from 'clsx'
-
 interface StatCardProps {
   label: string
   value: string | number
   sub?: string
-  className?: string
 }
 
-export default function StatCard({ label, value, sub, className }: StatCardProps) {
+export default function StatCard({ label, value, sub }: StatCardProps) {
   return (
-    <div className={clsx(
-      'bg-stone-50 border border-stone-200 rounded-lg px-5 py-4',
-      className
-    )}>
-      <p className="text-[11px] text-stone-400 font-medium uppercase tracking-widest mb-1.5">{label}</p>
-      <p className="text-[28px] font-medium tracking-tighter text-stone-900 leading-none">{value}</p>
-      {sub && <p className="text-[12px] text-stone-400 mt-1.5">{sub}</p>}
+    <div style={{
+      backgroundColor: '#FFFFFF',
+      border: '1px solid #E8E8E8',
+      borderRadius: 20,
+      padding: '22px 24px',
+    }}>
+      <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#BBBBBB', marginBottom: 12 }}>{label}</p>
+      <p style={{ fontSize: 34, fontWeight: 800, letterSpacing: '-0.04em', color: '#111111', lineHeight: 1 }}>{value}</p>
+      {sub && <p style={{ fontSize: 12, color: '#AAAAAA', marginTop: 8 }}>{sub}</p>}
     </div>
   )
 }

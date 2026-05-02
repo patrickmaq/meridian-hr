@@ -2,12 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import clsx from 'clsx'
 import {
   Users, Briefcase, GitBranch,
   UserCheck, TrendingUp, BookOpen,
   FileText, ClipboardList, Settings,
-  ChevronRight
 } from 'lucide-react'
 
 const nav = [
@@ -40,46 +38,59 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside
-      style={{ width: 'var(--sidebar-width)' }}
-      className="fixed top-0 left-0 h-screen bg-stone-50 border-r border-stone-200 flex flex-col z-30"
-    >
+    <aside style={{
+      width: 'var(--sidebar-width)',
+      backgroundColor: '#FFFFFF',
+      borderRight: '1px solid #E8E8E8',
+      position: 'fixed', top: 0, left: 0,
+      height: '100vh',
+      display: 'flex', flexDirection: 'column',
+      zIndex: 30,
+    }}>
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-stone-200">
-        <div className="flex items-center gap-2.5">
-          <div className="w-6 h-6 rounded bg-stone-800 flex items-center justify-center flex-shrink-0">
-            <span className="text-stone-50 text-[9px] font-semibold tracking-widest">M</span>
+      <div style={{ padding: '24px 20px 20px', borderBottom: '1px solid #F0F0F0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 10,
+            backgroundColor: '#111111',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <span style={{ fontSize: 14, fontWeight: 800, color: '#FFFFFF' }}>M</span>
           </div>
           <div>
-            <p className="text-[13px] font-medium tracking-tight text-stone-900 leading-none">Meridian</p>
-            <p className="text-[10px] text-stone-400 mt-0.5 leading-none">HR Platform</p>
+            <p style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1, color: '#111111' }}>Meridian</p>
+            <p style={{ fontSize: 10, marginTop: 3, lineHeight: 1, color: '#AAAAAA' }}>HR Platform</p>
           </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3">
+      {/* Nav */}
+      <nav style={{ flex: 1, overflowY: 'auto', padding: '16px 12px' }}>
         {nav.map((section) => (
-          <div key={section.label} className="mb-5">
-            <p className="text-[10px] font-medium text-stone-400 uppercase tracking-widest px-2 mb-1.5">
+          <div key={section.label} style={{ marginBottom: 20 }}>
+            <p style={{
+              fontSize: 10, fontWeight: 700,
+              textTransform: 'uppercase', letterSpacing: '0.08em',
+              padding: '0 10px', marginBottom: 4, color: '#CCCCCC',
+            }}>
               {section.label}
             </p>
             {section.items.map(({ href, label, icon: Icon }) => {
               const active = pathname === href || pathname.startsWith(href)
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={clsx(
-                    'flex items-center gap-2.5 px-2.5 py-2 rounded text-[13px] transition-all duration-150 mb-0.5 group',
-                    active
-                      ? 'bg-stone-200 text-stone-900 font-medium'
-                      : 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'
-                  )}
-                >
-                  <Icon size={14} strokeWidth={active ? 2 : 1.5} className="flex-shrink-0" />
-                  <span className="flex-1">{label}</span>
-                  {active && <ChevronRight size={11} className="text-stone-400" />}
+                <Link key={href} href={href} style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '9px 10px', borderRadius: 10,
+                  fontSize: 13, fontWeight: active ? 600 : 400,
+                  marginBottom: 1,
+                  backgroundColor: active ? '#111111' : 'transparent',
+                  color: active ? '#FFFFFF' : '#666666',
+                  textDecoration: 'none',
+                  transition: 'all 0.15s',
+                }}>
+                  <Icon size={15} strokeWidth={active ? 2.5 : 1.8} style={{ flexShrink: 0 }} />
+                  {label}
                 </Link>
               )
             })}
@@ -88,21 +99,26 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-3 py-4 border-t border-stone-200">
-        <Link
-          href="/dashboard/settings"
-          className="flex items-center gap-2.5 px-2.5 py-2 rounded text-[13px] text-stone-500 hover:text-stone-800 hover:bg-stone-100 transition-all duration-150"
-        >
-          <Settings size={14} strokeWidth={1.5} />
-          <span>Settings</span>
+      <div style={{ padding: '12px', borderTop: '1px solid #F0F0F0' }}>
+        <Link href="/dashboard/settings" style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '9px 10px', borderRadius: 10,
+          fontSize: 13, color: '#888888',
+          textDecoration: 'none', marginBottom: 8,
+        }}>
+          <Settings size={15} strokeWidth={1.8} />
+          Settings
         </Link>
-        <div className="flex items-center gap-2.5 px-2.5 py-2 mt-1">
-          <div className="w-6 h-6 rounded-full bg-stone-200 flex items-center justify-center text-[10px] font-medium text-stone-600">
-            P
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-medium text-stone-700 leading-none">Patrick</p>
-            <p className="text-[10px] text-stone-400 mt-0.5">Admin</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px' }}>
+          <div style={{
+            width: 30, height: 30, borderRadius: '50%',
+            backgroundColor: '#111111',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 11, fontWeight: 700, color: '#FFFFFF', flexShrink: 0,
+          }}>P</div>
+          <div>
+            <p style={{ fontSize: 13, fontWeight: 600, lineHeight: 1, color: '#111111' }}>Patrick</p>
+            <p style={{ fontSize: 10, marginTop: 3, color: '#AAAAAA' }}>Admin</p>
           </div>
         </div>
       </div>

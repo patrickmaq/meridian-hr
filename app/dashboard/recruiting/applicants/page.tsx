@@ -1,12 +1,19 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Filter, Download, Mail, Video, CheckCircle, ChevronRight, Plus } from 'lucide-react'
+import { Filter, Download, Mail, Video, CheckCircle, ChevronRight } from 'lucide-react'
 import StatCard from '@/components/ui/StatCard'
 import ScoreBar from '@/components/ui/ScoreBar'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
+import EmptyState from '@/components/ui/EmptyState'
 import { supabase, type Applicant } from '@/lib/supabase'
+
+const card: React.CSSProperties = {
+  backgroundColor: '#FDFCF8',
+  border: '1.5px solid #E2D9CA',
+  borderRadius: 20,
+}
 
 export default function ApplicantsPage() {
   const [applicants, setApplicants] = useState<Applicant[]>([])
@@ -28,111 +35,113 @@ export default function ApplicantsPage() {
 
   const reviewQueue = applicants.filter(a => a.status === 'Review queue').length
   const shortlisted = applicants.filter(a => a.grade === 'A+' || a.grade === 'A').length
-  const avgScore = applicants.length
-    ? Math.round(applicants.reduce((s, a) => s + (a.score || 0), 0) / applicants.length)
-    : 0
+  const avgScore = applicants.length ? Math.round(applicants.reduce((s, a) => s + (a.score || 0), 0) / applicants.length) : 0
 
   return (
     <div className="animate-fade-up">
-      <div className="grid grid-cols-4 gap-4 mb-7 stagger-1 animate-fade-up">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 28 }} className="stagger-1 animate-fade-up">
         <StatCard label="Total applicants" value={applicants.length} sub="Across all open roles" />
         <StatCard label="Review queue" value={reviewQueue} sub="Awaiting hiring manager" />
         <StatCard label="Shortlisted" value={shortlisted} sub="Grade A or above" />
-        <StatCard label="Avg score" value={applicants.length ? `${avgScore}%` : '—'} sub="This posting" />
+        <StatCard label="Avg score" value={applicants.length ? `${avgScore}%` : '—'} />
       </div>
 
-      <div className="flex gap-5 stagger-2 animate-fade-up">
-        {/* List */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-[12px] font-medium text-stone-400 uppercase tracking-widest">All applicants</p>
-            <div className="flex gap-2">
+      <div style={{ display: 'flex', gap: 20 }} className="stagger-2 animate-fade-up">
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#A89780' }}>All applicants</p>
+            <div style={{ display: 'flex', gap: 8 }}>
               <Button variant="secondary" size="sm"><Filter size={12} />Filter</Button>
               <Button variant="secondary" size="sm"><Download size={12} />Export</Button>
             </div>
           </div>
 
           {loading ? (
-            <div className="text-[13px] text-stone-400 py-8 text-center">Loading...</div>
+            <div style={{ textAlign: 'center', padding: '40px 0', color: '#A89780', fontSize: 13 }}>Loading...</div>
           ) : applicants.length === 0 ? (
-            <div className="text-[13px] text-stone-400 py-12 text-center border border-dashed border-stone-300 rounded-xl">
-              No applicants yet. Share your public application form link to start receiving applications.
-            </div>
+            <EmptyState
+              illustration="people"
+              title="No applicants yet"
+              subtitle="Share your application form link with candidates to start receiving applications."
+            />
           ) : (
-            <div className="space-y-2">
-              {applicants.map((a) => (
-                <button key={a.id} onClick={() => setSelected(a)}
-                  className={`w-full text-left flex items-center gap-3.5 px-4 py-3.5 rounded-lg border transition-all duration-150 ${
-                    selected?.id === a.id ? 'bg-stone-50 border-stone-300 shadow-sm' : 'bg-stone-50 border-stone-200 hover:border-stone-300'
-                  }`}>
-                  <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-[11px] font-medium text-stone-600 flex-shrink-0">
-                    {a.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-medium text-stone-800 leading-none">{a.name}</p>
-                    <p className="text-[12px] text-stone-400 mt-0.5">
-                      {(a as any).jobs?.title || 'Applicant'} · Applied {new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </p>
-                  </div>
-                  {a.grade && <Badge label={a.grade} variant="grade" grade={a.grade} />}
-                  {selected?.id === a.id && <ChevronRight size={13} className="text-stone-300 flex-shrink-0" />}
-                </button>
-              ))}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {applicants.map((a) => {
+                const initials = a.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
+                const isSelected = selected?.id === a.id
+                return (
+                  <button key={a.id} onClick={() => setSelected(a)} style={{
+                    width: '100%', textAlign: 'left',
+                    display: 'flex', alignItems: 'center', gap: 14,
+                    padding: '14px 18px', borderRadius: 16,
+                    border: isSelected ? '2px solid #1A1208' : '1.5px solid #E2D9CA',
+                    backgroundColor: '#FDFCF8',
+                    cursor: 'pointer', transition: 'all 0.15s',
+                    boxShadow: isSelected ? '0 2px 12px rgba(26,18,8,0.08)' : 'none',
+                  }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#E2D9CA', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#2E2218', flexShrink: 0 }}>
+                      {initials}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1208', lineHeight: 1, marginBottom: 4 }}>{a.name}</p>
+                      <p style={{ fontSize: 12, color: '#A89780' }}>
+                        {(a as any).jobs?.title || 'Applicant'} · {new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                    </div>
+                    {a.grade && <Badge label={a.grade} variant="grade" grade={a.grade} />}
+                    {isSelected && <ChevronRight size={14} color="#A89780" style={{ flexShrink: 0 }} />}
+                  </button>
+                )
+              })}
             </div>
           )}
         </div>
 
-        {/* Detail panel */}
         {selected && (
-          <div className="w-[300px] flex-shrink-0">
-            <div className="bg-stone-50 border border-stone-200 rounded-xl p-5 sticky top-[76px]">
-              <div className="flex items-center gap-3 pb-4 mb-4 border-b border-stone-200">
-                <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center text-[13px] font-medium text-stone-600">
+          <div style={{ width: 300, flexShrink: 0 }}>
+            <div style={{ ...card, padding: 20, position: 'sticky', top: 80 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 16, marginBottom: 16, borderBottom: '1.5px solid #E2D9CA' }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', backgroundColor: '#E2D9CA', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: '#2E2218' }}>
                   {selected.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-[14px] font-medium text-stone-900 leading-none">{selected.name}</p>
-                  <p className="text-[12px] text-stone-400 mt-0.5">{selected.email}</p>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: '#1A1208', lineHeight: 1 }}>{selected.name}</p>
+                  <p style={{ fontSize: 12, color: '#8C7E6A', marginTop: 4 }}>{selected.email}</p>
                 </div>
               </div>
 
               {selected.grade ? (
-                <>
-                  <div className="mb-5">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-[42px] font-medium tracking-tighter text-stone-900 leading-none">{selected.grade}</span>
-                      {selected.score && <span className="text-[12px] text-stone-400">{selected.score}/100</span>}
-                    </div>
-                    {selected.score_summary && (
-                      <p className="text-[12px] text-stone-500 mt-1.5 leading-snug">{selected.score_summary}</p>
-                    )}
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                    <span style={{ fontSize: 52, fontWeight: 800, letterSpacing: '-0.05em', color: '#1A1208', lineHeight: 1 }}>{selected.grade}</span>
+                    {selected.score && <span style={{ fontSize: 13, color: '#A89780' }}>{selected.score}/100</span>}
                   </div>
-
-                  {selected.score_breakdown && (
-                    <div className="mb-4 pb-4 border-b border-stone-200">
-                      {Object.entries(selected.score_breakdown).map(([k, v]) => (
-                        <ScoreBar key={k} label={k} value={v as number} />
-                      ))}
-                    </div>
-                  )}
-                </>
+                  {selected.score_summary && <p style={{ fontSize: 12, color: '#8C7E6A', marginTop: 8, lineHeight: 1.6 }}>{selected.score_summary}</p>}
+                </div>
               ) : (
-                <div className="mb-4 pb-4 border-b border-stone-200">
-                  <p className="text-[12px] text-stone-400">Scoring pending</p>
+                <div style={{ marginBottom: 16 }}>
+                  <p style={{ fontSize: 12, color: '#A89780', fontStyle: 'italic' }}>AI scoring pending</p>
                 </div>
               )}
 
-              {/* Activity log */}
+              {selected.score_breakdown && (
+                <div style={{ marginBottom: 16, paddingBottom: 16, borderBottom: '1.5px solid #E2D9CA' }}>
+                  {Object.entries(selected.score_breakdown).map(([k, v]) => (
+                    <ScoreBar key={k} label={k} value={v as number} />
+                  ))}
+                </div>
+              )}
+
               {selected.activity_log && selected.activity_log.length > 0 && (
-                <div className="mb-4 pb-4 border-b border-stone-200">
-                  <p className="text-[11px] font-medium text-stone-400 uppercase tracking-widest mb-3">Activity log</p>
-                  <div className="space-y-2.5">
+                <div style={{ marginBottom: 16, paddingBottom: 16, borderBottom: '1.5px solid #E2D9CA' }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#A89780', marginBottom: 12 }}>Activity</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {selected.activity_log.map((a: any, i: number) => (
-                      <div key={i} className="flex items-start gap-2.5">
-                        <CheckCircle size={13} className="text-stone-400 mt-0.5 flex-shrink-0" />
+                      <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                        <CheckCircle size={13} color="#A89780" style={{ marginTop: 1, flexShrink: 0 }} />
                         <div>
-                          <p className="text-[12px] text-stone-600 leading-snug">{a.label}</p>
-                          <p className="text-[11px] text-stone-400">{a.time}</p>
+                          <p style={{ fontSize: 12, color: '#2E2218', lineHeight: 1.4 }}>{a.label}</p>
+                          <p style={{ fontSize: 11, color: '#A89780', marginTop: 2 }}>{a.time}</p>
                         </div>
                       </div>
                     ))}
@@ -140,12 +149,12 @@ export default function ApplicantsPage() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-2">
-                <Button variant="primary" size="sm" className="w-full justify-center">
-                  <Mail size={12} />Contact applicant
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <Button variant="primary" size="sm" style={{ width: '100%', justifyContent: 'center' }}>
+                  <Mail size={13} />Contact applicant
                 </Button>
-                <Button variant="secondary" size="sm" className="w-full justify-center">
-                  <Video size={12} />Schedule interview
+                <Button variant="secondary" size="sm" style={{ width: '100%', justifyContent: 'center' }}>
+                  <Video size={13} />Schedule interview
                 </Button>
               </div>
             </div>

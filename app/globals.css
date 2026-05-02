@@ -1,61 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Serif+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @import "tailwindcss";
 
 @theme {
-  --font-family-sans: 'DM Sans', sans-serif;
-  --font-family-serif: 'DM Serif Display', serif;
-
-  --color-stone-50: #FAFAF9;
-  --color-stone-100: #F5F4F1;
-  --color-stone-200: #ECEAE5;
-  --color-stone-300: #D9D6CE;
-  --color-stone-400: #B8B3A8;
-  --color-stone-500: #8C8679;
-  --color-stone-600: #635E54;
-  --color-stone-700: #3D3A34;
-  --color-stone-800: #252320;
-  --color-stone-900: #141310;
-
-  --color-sage: #8FA88B;
-  --color-sage-light: #EEF0EC;
-  --color-blush: #C4A898;
-  --color-blush-light: #F5EFEB;
-
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
+  --font-family-sans: 'Plus Jakarta Sans', sans-serif;
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 14px;
   line-height: 1.6;
-  background-color: #ECEAE5;
-  color: #252320;
+  background-color: #F2F2F2;
+  color: #111111;
 }
 
 :root {
-  --sidebar-width: 220px;
-  --topbar-height: 60px;
+  --sidebar-width: 228px;
+  --topbar-height: 64px;
+  --bg: #F2F2F2;
+  --card: #FFFFFF;
+  --border: #E8E8E8;
+  --ink: #111111;
+  --muted: #888888;
+  --accent: #111111;
 }
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D9D6CE; border-radius: 99px; }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: #DDDDDD; border-radius: 99px; }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeIn {
@@ -63,10 +41,11 @@ body {
   to   { opacity: 1; }
 }
 
-.animate-fade-up { animation: fadeUp 0.35s ease forwards; }
-.animate-fade-in { animation: fadeIn 0.25s ease forwards; }
-.stagger-1 { animation-delay: 0.05s; opacity: 0; }
-.stagger-2 { animation-delay: 0.10s; opacity: 0; }
-.stagger-3 { animation-delay: 0.15s; opacity: 0; }
-.stagger-4 { animation-delay: 0.20s; opacity: 0; }
-.stagger-5 { animation-delay: 0.25s; opacity: 0; }
+.animate-fade-up  { animation: fadeUp  0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+.animate-fade-in  { animation: fadeIn  0.25s ease forwards; }
+
+.stagger-1 { animation-delay: 0.04s; opacity: 0; }
+.stagger-2 { animation-delay: 0.09s; opacity: 0; }
+.stagger-3 { animation-delay: 0.14s; opacity: 0; }
+.stagger-4 { animation-delay: 0.19s; opacity: 0; }
+.stagger-5 { animation-delay: 0.24s; opacity: 0; }
