@@ -54,17 +54,36 @@ export default function ApplyPage() {
     fetchJob()
   }, [jobId])
 
-  async function handleSubmit(e: React.FormEvent) {
+async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!name || !email) return
     setSubmitting(true)
+
     const activityLog = [
       { label: 'Application submitted', time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) },
     ]
-    await supabase.from('applicants').insert([{
-      job_id: jobId, name, email, phone, answers,
-      status: 'Pending review', activity_log: activityLog,
-    }])
+
+    const { data: inserted } = await supabase
+      .from('applicants')
+      .insert([{
+        job_id: jobId, name, email, phone, answers,
+        status: 'Pending review', activity_log: activityLog,
+      }])
+      .select('id')
+      .single()
+
+    if (inserted?.id && job?.scoring_criteria) {
+      fetch('/api/score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          applicantId: inserted.id,
+          answers,
+          scoringCriteria: job.scoring_criteria,
+        }),
+      }).catch(() => {})
+    }
+
     setSubmitting(false)
     setSubmitted(true)
   }
