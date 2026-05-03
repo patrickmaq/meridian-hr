@@ -1,12 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   Users, Briefcase, GitBranch,
   UserCheck, TrendingUp, BookOpen,
-  FileText, ClipboardList, Settings,
+  FileText, ClipboardList, Settings, LogOut,
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase-browser'
+import { useEffect, useState } from 'react'
 
 const nav = [
   {
@@ -36,6 +38,23 @@ const nav = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const supabase = createClient()
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUserEmail(data.user?.email ?? null)
+    })
+  }, [])
+
+  async function handleSignOut() {
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
+
+  const initials = userEmail ? userEmail[0].toUpperCase() : '?'
+  const displayName = userEmail ? userEmail.split('@')[0] : 'User'
 
   return (
     <aside style={{
@@ -115,11 +134,25 @@ export default function Sidebar() {
             backgroundColor: '#111111',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 11, fontWeight: 700, color: '#FFFFFF', flexShrink: 0,
-          }}>P</div>
-          <div>
-            <p style={{ fontSize: 13, fontWeight: 600, lineHeight: 1, color: '#111111' }}>Patrick</p>
+          }}>{initials}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 13, fontWeight: 600, lineHeight: 1, color: '#111111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</p>
             <p style={{ fontSize: 10, marginTop: 3, color: '#AAAAAA' }}>Admin</p>
           </div>
+          <button
+            onClick={handleSignOut}
+            title="Sign out"
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              padding: 4, borderRadius: 6, color: '#CCCCCC',
+              display: 'flex', alignItems: 'center',
+              transition: 'color 0.15s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#111111')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#CCCCCC')}
+          >
+            <LogOut size={14} />
+          </button>
         </div>
       </div>
     </aside>
