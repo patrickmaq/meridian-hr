@@ -28,7 +28,7 @@ type Filters = {
 
 export default function ApplicantsPage() {
   const [applicants, setApplicants] = useState<Applicant[]>([])
-  const [jobs, setJobs] = useState<Job[]>([])
+  const [jobs, setJobs] = useState<{ id: string; title: string }[]>([])
   const [selected, setSelected] = useState<Applicant | null>(null)
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
